@@ -1,12 +1,12 @@
 {
   "htyf": {
-    "type": "app",
+    "type": "game",
     "rotate": "landscape",
     "name": "勇者",
     "projectname": "勇者",
     "appid": "fe27d0d96e8fe86bce2eb341386c9f37",
     "appUrlConfig": "https://raw.githubusercontent.com/htyf-mp-community/demo/main/v2/game/latest/app.json",
     "zipUrl": "https://raw.githubusercontent.com/htyf-mp-community/demo/main/v2/game/latest/dist.[PLATFORM].dgz",
-    "version": "1.0.6"
+    "version": "1.0.9"
   }
 }
