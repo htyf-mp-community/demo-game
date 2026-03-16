@@ -11,8 +11,9 @@ config_version=5
 [application]
 
 config/name="Project"
-run/main_scene="res://scenes/game.tscn"
+run/main_scene="uid://c4ryoxvs3ye46"
 config/features=PackedStringArray("4.5", "Forward Plus")
+boot_splash/bg_color=Color(0.28627452, 0.14117648, 0.14117648, 1)
 config/icon="res://icon.svg"
 
 [autoload]
