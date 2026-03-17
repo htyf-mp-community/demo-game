@@ -1,5 +1,5 @@
-extends Control
-
+extends Node2D
+	
 var _rn: RNInterface
 
 @onready var game_manager: Node = %GameManager
