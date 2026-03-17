@@ -1,6 +1,8 @@
-[gd_scene load_steps=19 format=3 uid="uid://cy168swpr8vvn"]
+[gd_scene load_steps=21 format=3 uid="uid://cy168swpr8vvn"]
 
 [ext_resource type="Script" uid="uid://btea4rea0m35m" path="res://scripts/game_manager.gd" id="1_0tnpc"]
+[ext_resource type="Script" uid="uid://dp0enaosntiw3" path="res://scripts/game.gd" id="1_dinhu"]
+[ext_resource type="PackedScene" uid="uid://dh7g0lqali0rj" path="res://scenes/Setting.tscn" id="1_kvpfn"]
 [ext_resource type="PackedScene" uid="uid://1cxo1xyf4oq0" path="res://scenes/killzone.tscn" id="1_u5sy4"]
 [ext_resource type="Script" uid="uid://dj8ncnx7yvbiw" path="res://godot-sdk.gd" id="1_uwrxv"]
 [ext_resource type="PackedScene" uid="uid://diy1rbnx7ofgo" path="res://scenes/player.tscn" id="2_yqjtg"]
@@ -351,6 +353,7 @@ _data = {
 
 [node name="Game" type="Node2D"]
 position = Vector2(323, 188)
+script = ExtResource("1_dinhu")
 
 [node name="GameManager" type="Node" parent="."]
 unique_name_in_owner = true
@@ -371,6 +374,17 @@ theme_override_colors/font_color = Color(1, 0.38431373, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.047058824)
 theme_override_fonts/font = ExtResource("4_vtaks")
 text = "$ 0"
+
+[node name="Setting" type="Button" parent="UICanvas"]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -150.0
+offset_top = 26.0
+offset_right = -110.0
+offset_bottom = 53.0
+grow_horizontal = 0
+text = "设置"
 
 [node name="Killzone" parent="." instance=ExtResource("1_u5sy4")]
 position = Vector2(58, 83)
@@ -422,23 +436,32 @@ libraries = {
 }
 autoplay = "move"
 
-[node name="platform" parent="." instance=ExtResource("6_p57ef")]
-position = Vector2(39, 8)
-
-[node name="Coin" parent="." instance=ExtResource("6_p57ef")]
-position = Vector2(135, -23)
-
-[node name="Coin2" parent="." instance=ExtResource("6_p57ef")]
-position = Vector2(231, -6)
-
-[node name="Coin3" parent="." instance=ExtResource("6_p57ef")]
-position = Vector2(439, -24)
-
-[node name="Coin4" parent="." instance=ExtResource("6_p57ef")]
-position = Vector2(329, -70)
-
-[node name="Coin5" parent="." instance=ExtResource("6_p57ef")]
-position = Vector2(119, -73)
-
 [node name="Slime" parent="." instance=ExtResource("8_gee14")]
 position = Vector2(360, 4)
+
+[node name="Coins" type="Node" parent="."]
+
+[node name="Coin" parent="Coins" instance=ExtResource("6_p57ef")]
+position = Vector2(458, 165)
+
+[node name="Coin2" parent="Coins" instance=ExtResource("6_p57ef")]
+position = Vector2(554, 182)
+
+[node name="Coin3" parent="Coins" instance=ExtResource("6_p57ef")]
+position = Vector2(762, 164)
+
+[node name="Coin4" parent="Coins" instance=ExtResource("6_p57ef")]
+position = Vector2(652, 118)
+
+[node name="Coin5" parent="Coins" instance=ExtResource("6_p57ef")]
+position = Vector2(442, 115)
+
+[node name="Platforms" type="Node" parent="."]
+
+[node name="platform" parent="Platforms" instance=ExtResource("6_p57ef")]
+position = Vector2(362, 196)
+
+[node name="Setting" parent="." instance=ExtResource("1_kvpfn")]
+unique_name_in_owner = true
+
+[connection signal="pressed" from="UICanvas/Setting" to="." method="_on_setting_pressed"]

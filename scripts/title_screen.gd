@@ -2,8 +2,6 @@ extends Node2D
 	
 var _rn: RNInterface
 
-@onready var game_manager: Node = %GameManager
-
 func change_scene(path: String, params := {}) -> void:
 	var tree := get_tree()
 	#tree.paused = true
@@ -38,3 +36,11 @@ func _on_website_pressed() -> void:
 	if _rn == null:
 		return
 	_rn.call_open_browser("https://godotengine.org")
+	
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_APPLICATION_FOCUS_OUT:
+		print("进入后台，暂停游戏")
+		get_tree().paused = true
+	if what == NOTIFICATION_APPLICATION_FOCUS_IN:
+		print("回到前台，恢复游戏")
+		get_tree().paused = false
