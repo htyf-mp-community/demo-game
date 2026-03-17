@@ -1,11 +1,1 @@
-{
-  "type": "game",
-  "rotate": "landscape",
-  "name": "勇者",
-  "projectname": "勇者",
-  "appid": "fe27d0d96e8fe86bce2eb341386c9f37",
-  "appUrlConfig": "https://raw.githubusercontent.com/htyf-mp-community/demo-game/main/dist/app.json",
-  "zipUrl": "https://raw.githubusercontent.com/htyf-mp-community/demo-game/main/dist/dist.[PLATFORM].dgz",
-  "version": "1.0.44",
-  "engines": "2.0.0"
-}
+{"type":"game","rotate":"landscape","name":"勇者","projectname":"勇者","appid":"fe27d0d96e8fe86bce2eb341386c9f37","appUrlConfig":"http://192.168.31.44:8000/app.json","zipUrl":"http://192.168.31.44:8000/dist.dgz","version":"1.0.45","engines":"2.0.0"}
