@@ -3,5 +3,5 @@
 node_modules/
 
 dist/*
-!dist/app.json
-!dist/*.dgz
+# !dist/app.json
+# !dist/*.dgz
