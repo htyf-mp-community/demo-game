@@ -1,5 +1,6 @@
 extends Node2D
 @onready var setting: CanvasLayer = %Setting
+@onready var death: CanvasLayer = %Death
 
 func alert(text):
 	var dialog = AcceptDialog.new()
@@ -19,7 +20,7 @@ func _game_resume():
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	setting.visible = false
-	pass
+	death.visible = false
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_APPLICATION_FOCUS_OUT:

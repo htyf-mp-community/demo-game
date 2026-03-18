@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://cy168swpr8vvn"]
+[gd_scene load_steps=23 format=3 uid="uid://cy168swpr8vvn"]
 
 [ext_resource type="Script" uid="uid://btea4rea0m35m" path="res://scripts/game_manager.gd" id="1_0tnpc"]
 [ext_resource type="Script" uid="uid://dp0enaosntiw3" path="res://scripts/game.gd" id="1_dinhu"]
@@ -13,6 +13,7 @@
 [ext_resource type="PackedScene" uid="uid://dw34vah3xvy4p" path="res://scenes/Platform.tscn" id="5_iywne"]
 [ext_resource type="PackedScene" uid="uid://bjflk3ifhf86x" path="res://scenes/coin.tscn" id="6_p57ef"]
 [ext_resource type="PackedScene" uid="uid://kp1nekuk7iqi" path="res://scenes/slime.tscn" id="8_gee14"]
+[ext_resource type="PackedScene" uid="uid://chq5t7avi66lj" path="res://scenes/Death_Screen.tscn" id="14_trtic"]
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_gee14"]
 
@@ -464,6 +465,9 @@ libraries = {
 autoplay = "move"
 
 [node name="Setting" parent="." instance=ExtResource("1_kvpfn")]
+unique_name_in_owner = true
+
+[node name="Death" parent="." instance=ExtResource("14_trtic")]
 unique_name_in_owner = true
 
 [connection signal="pressed" from="UI/Setting" to="." method="_on_setting_pressed"]

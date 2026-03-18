@@ -1,6 +1,7 @@
 extends Area2D
 
 @onready var timer: Timer = $Timer
+@onready var death: CanvasLayer = %Death
 
 func _on_body_entered(body: Node2D) -> void:
 	timer.start()
@@ -12,5 +13,6 @@ func _on_body_entered(body: Node2D) -> void:
 
 func _on_timer_timeout() -> void:
 	Engine.time_scale = 1.0
-	get_tree().reload_current_scene()
+	death.visible = true
+	get_tree().paused = true
 	pass # Replace with function body.
