@@ -1,10 +1,9 @@
-[gd_scene load_steps=23 format=3 uid="uid://cy168swpr8vvn"]
+[gd_scene load_steps=22 format=3 uid="uid://cy168swpr8vvn"]
 
 [ext_resource type="Script" uid="uid://btea4rea0m35m" path="res://scripts/game_manager.gd" id="1_0tnpc"]
-[ext_resource type="Script" uid="uid://dp0enaosntiw3" path="res://scripts/game.gd" id="1_dinhu"]
+[ext_resource type="Script" uid="uid://esxeu083r8vh" path="res://scripts/game.gd" id="1_dinhu"]
 [ext_resource type="PackedScene" uid="uid://dh7g0lqali0rj" path="res://scenes/Setting.tscn" id="1_kvpfn"]
 [ext_resource type="PackedScene" uid="uid://1cxo1xyf4oq0" path="res://scenes/killzone.tscn" id="1_u5sy4"]
-[ext_resource type="Script" uid="uid://dj8ncnx7yvbiw" path="res://godot-sdk.gd" id="1_uwrxv"]
 [ext_resource type="PackedScene" uid="uid://diy1rbnx7ofgo" path="res://scenes/player.tscn" id="2_yqjtg"]
 [ext_resource type="Script" uid="uid://b88hg2txhulve" path="res://scripts/ui.gd" id="3_kvuet"]
 [ext_resource type="PackedScene" uid="uid://bxy0j60el1nu7" path="res://scenes/virtual_joypad.tscn" id="4_iywne"]
@@ -356,10 +355,6 @@ _data = {
 [node name="Game" type="Node2D"]
 position = Vector2(323, 188)
 script = ExtResource("1_dinhu")
-
-[node name="RNInterface" type="Node" parent="."]
-unique_name_in_owner = true
-script = ExtResource("1_uwrxv")
 
 [node name="GameManager" type="Node" parent="."]
 unique_name_in_owner = true

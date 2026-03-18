@@ -1,5 +1,4 @@
 extends CanvasLayer
-@onready var rn_interface: RNInterface = %RNInterface
 @onready var game_manager: Node = %GameManager
 
 @onready var setting: Button = $Setting

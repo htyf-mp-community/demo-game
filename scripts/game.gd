@@ -35,3 +35,13 @@ func _notification(what: int) -> void:
 func _on_setting_pressed() -> void:
 	_game_pause();
 	pass # Replace with function body.
+	
+func change_scene(path: String, params := {}) -> void:
+	var tree := get_tree()
+	#tree.paused = true
+
+	tree.change_scene_to_file(path)
+	if "init" in params:
+		params.init.call()
+	
+	await tree.tree_changed

@@ -1,6 +1,4 @@
 extends Node2D
-	
-var _rn: RNInterface
 
 func change_scene(path: String, params := {}) -> void:
 	var tree := get_tree()
@@ -15,7 +13,7 @@ func change_scene(path: String, params := {}) -> void:
 	#tree.paused = false
 	
 func _ready() -> void:
-	_rn = get_node("RNInterface") as RNInterface
+	pass
 	
 		
 func _on_new_game_pressed() -> void:
@@ -27,15 +25,14 @@ func _on_load_game_pressed() -> void:
 	
 
 func _on_exit_game_pressed() -> void:
-	if _rn == null:
-		return
-	_rn.call_close_app()
+	print("退出")
+	HtyfSdk.call_close_app()
 
 
 func _on_website_pressed() -> void:
-	if _rn == null:
+	if HtyfSdk == null:
 		return
-	_rn.call_open_browser("https://godotengine.org")
+	HtyfSdk.call_open_browser("https://godotengine.org")
 	
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_APPLICATION_FOCUS_OUT:
