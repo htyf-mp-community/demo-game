@@ -1,23 +1,11 @@
 extends Node2D
+@onready var player: CharacterBody2D = $Player
 
-func change_scene(path: String, params := {}) -> void:
-	var tree := get_tree()
-	#tree.paused = true
-
-	tree.change_scene_to_file(path)
-	if "init" in params:
-		params.init.call()
-	
-	await tree.tree_changed
-
-	#tree.paused = false
-	
 func _ready() -> void:
-	pass
-	
+	print("init")
 		
 func _on_new_game_pressed() -> void:
-	change_scene("res://scenes/game.tscn", {})
+	GameManager.change_scene("res://scenes/game.tscn", {})
 
 
 func _on_load_game_pressed() -> void:
