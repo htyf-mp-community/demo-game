@@ -92,12 +92,12 @@ func _on_ipc_response(message: String) -> void:
 
 # 宿主生命周期回调 参数为what与_notification的参数对齐
 var _host_lifecycle_callback: Callable = func(what: int):
-	HtyfSdk.log("host_lifecycle default callback: " + str(what))
+	# print("host_lifecycle default callback: " + str(what))
 	pass
 # 设置宿主生命周期回调
 func set_host_lifecycle_callback(c: Callable = Callable()) -> void:
 	_host_lifecycle_callback = func(what: int):
-		HtyfSdk.log("host_lifecycle: " + str(what))
+		# print("host_lifecycle: " + str(what))
 		if c.is_valid():
 			c.call(what)
 
