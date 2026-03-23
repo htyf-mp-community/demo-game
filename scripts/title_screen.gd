@@ -1,6 +1,7 @@
 extends Node2D
 @onready var player: CharacterBody2D = $Player
 
+
 func _ready() -> void:
 	HtyfSdk.log("init")
 		
@@ -25,8 +26,8 @@ func _on_website_pressed() -> void:
 	
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_APPLICATION_FOCUS_OUT:
-		print("进入后台，暂停游戏")
+		HtyfSdk.log("进入后台，暂停游戏")
 		get_tree().paused = true
 	if what == NOTIFICATION_APPLICATION_FOCUS_IN:
-		print("回到前台，恢复游戏")
+		HtyfSdk.log("回到前台，恢复游戏")
 		get_tree().paused = false

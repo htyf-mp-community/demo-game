@@ -5,11 +5,23 @@ class_name _HtyfSdk
 ## RN 处理后会通过 emitToGodot 回传，本节点发出 ipcResponse 信号，格式 { "id", "type", "success": bool, "payload"?, "error"? }
 signal ipcMain(message: String)
 signal ipcResponse(message: String)
+## 宿主 RN 下发的应用生命周期（嵌入模式下勿依赖 NOTIFICATION_APPLICATION_FOCUS_*，应连接此信号）
+## event: resume | pause | inactive（与 RN AppState 对齐）
 
 var _pending_callbacks: Dictionary = {}
 var _ipc_response_connected: bool = false
 var _isReady: bool = false
 var _is_dev_mode: bool = false
+## RN 侧胶囊布局就绪前，普通 call_rn 先入队，待 getMenuButtonBoundingClientRect 成功后再发出
+var _rn_container_ready: bool = false
+var _pending_rn_calls: Array = []
+## 允许在容器未就绪时直接发往 RN（用于拉布局、握手、日志，避免死锁）
+var _RN_GATE_BYPASS_TYPES: PackedStringArray = PackedStringArray([
+	"getMenuButtonBoundingClientRect",
+	"isReady",
+	"__log",
+])
+
 var _menu_button_bounding_client_rect: Dictionary = {
 	"top" = 0,
 	"right" = 0,
@@ -30,7 +42,7 @@ func log(message: Variant, level: String = "log") -> void:
 		message_str = JSON.stringify(message)
 	else:
 		message_str = str(message)
-	print("__log[ " + level + " ]: " + message_str)
+	print("[ " + level + " ]: " + message_str)
 	call_rn("__log", { "message": message_str, "level": level })
 
 func _ready() -> void:
@@ -44,9 +56,8 @@ func _ready() -> void:
 		call_show_modal("success", "isReady result: " + JSON.stringify(data))
 		_isReady = data.get("payload", false)
 	)
-	call_rn("getMenuButtonBoundingClientRect", {}, func(_data: Dictionary):
-		pass
-	)
+	# 先拉一次胶囊区域，成功后再 _mark_rn_container_ready 并 flush 队列
+	call_get_menu_button_bounding_client_rect()
 
 func _on_ipc_response(message: String) -> void:
 	# message 是 RN 回传的 JSON 字符串
@@ -61,6 +72,12 @@ func _on_ipc_response(message: String) -> void:
 		if _is_dev_mode:
 			call_show_modal("error", "data is not a dictionary: " + message)	
 		return
+	# 宿主主动推送：无 id，不走 pending 回调（嵌入 Godot 时系统不会把前后台事件交给 _notification）
+	if str(data.get("type", "")) == "lifecycle":
+		var ev: int = int(data.get("event", 2017))
+		if _host_lifecycle_callback.is_valid():
+			_host_lifecycle_callback.call(ev)
+		return
 	var id: String = str(data.get("id", ""))
 	if id == "":
 		if _is_dev_mode:
@@ -73,18 +90,60 @@ func _on_ipc_response(message: String) -> void:
 	if cb.is_valid():
 		cb.call(data)
 
+# 宿主生命周期回调 参数为what与_notification的参数对齐
+var _host_lifecycle_callback: Callable = func(what: int):
+	HtyfSdk.log("host_lifecycle default callback: " + str(what))
+	pass
+# 设置宿主生命周期回调
+func set_host_lifecycle_callback(c: Callable = Callable()) -> void:
+	_host_lifecycle_callback = func(what: int):
+		HtyfSdk.log("host_lifecycle: " + str(what))
+		if c.is_valid():
+			c.call(what)
+
+# 宿主生命周期回调
+func _notification(what: int) -> void:
+	if _host_lifecycle_callback.is_valid():
+		_host_lifecycle_callback.call(what)
+
 ## RN 调用此方法传入一个 Callable，Godot 执行 c.call() 取得返回值（RN 的响应 JSON），并发出 ipcResponse 供业务层使用
 func emitToGodot(c: Callable) -> void:
 	var result: Variant = c.call()
 	if result != null and str(result).length() > 0:
 		ipcResponse.emit(str(result))
-		
 
-## 便捷方法：向 RN 发起 SDK 调用。type 为方法名，payload 为可选参数字典。
-## 业务层连接 ipcResponse 信号，根据返回 JSON 的 id 或 type 匹配本次调用结果。
-## 支持的 type 示例：openQR, showToast, showModal, getClipboardString, setClipboardString, openBrowser, getNetworkState, triggerHaptic 等；
-## 也可以直接传 SDKFuncs 上的其它方法名，并通过 payload.args（数组）传参。
-func call_rn(type: String, payload: Dictionary = {}, on_result: Callable = Callable()) -> String:
+
+func _flush_pending_rn_queue() -> void:
+	if _pending_rn_calls.is_empty():
+		return
+	var batch: Array = _pending_rn_calls.duplicate()
+	_pending_rn_calls.clear()
+	for item in batch:
+		if typeof(item) != TYPE_DICTIONARY:
+			continue
+		var t: String = str(item.get("type", ""))
+		var p: Dictionary = item.get("payload", {})
+		if typeof(p) != TYPE_DICTIONARY:
+			p = {}
+		var cb: Callable = item.get("on_result", Callable())
+		_call_rn_immediate(t, p, cb)
+
+
+func _mark_rn_container_ready() -> void:
+	if _rn_container_ready:
+		return
+	_rn_container_ready = true
+	_flush_pending_rn_queue()
+
+
+func _rect_is_nonzero(rect: Dictionary) -> bool:
+	var w = float(rect.get("width", 0))
+	var h = float(rect.get("height", 0))
+	return w > 0.0 and h > 0.0
+
+
+## 实际发 IPC（不经过容器门控）
+func _call_rn_immediate(type: String, payload: Dictionary = {}, on_result: Callable = Callable()) -> String:
 	var id := str(type + "_" + str(Time.get_ticks_msec()) + "_" + str(randi()))
 	var msg := { "id": id, "type": type, "payload": payload }
 	var json_str: String = JSON.stringify(msg)
@@ -96,6 +155,22 @@ func call_rn(type: String, payload: Dictionary = {}, on_result: Callable = Calla
 
 	ipcMain.emit(base64)
 	return id
+
+
+## 便捷方法：向 RN 发起 SDK 调用。type 为方法名，payload 为可选参数字典。
+## 在 RN 胶囊布局未就绪前，除白名单方法外会先入队，待 getMenuButtonBoundingClientRect 返回有效尺寸后再依次发出。
+## 业务层连接 ipcResponse 信号，根据返回 JSON 的 id 或 type 匹配本次调用结果。
+## 支持的 type 示例：openQR, showToast, showModal, getClipboardString, setClipboardString, openBrowser, getNetworkState, triggerHaptic 等；
+## 也可以直接传 SDKFuncs 上的其它方法名，并通过 payload.args（数组）传参。
+func call_rn(type: String, payload: Dictionary = {}, on_result: Callable = Callable()) -> String:
+	if not _rn_container_ready and not _RN_GATE_BYPASS_TYPES.has(type):
+		_pending_rn_calls.append({
+			"type": type,
+			"payload": payload,
+			"on_result": on_result,
+		})
+		return "queued_" + str(Time.get_ticks_msec()) + "_" + str(randi())
+	return _call_rn_immediate(type, payload, on_result)
 
 ## 示例：打开扫码
 ## on_result 回调签名约定：func _cb(result: String) -> void
@@ -147,9 +222,9 @@ func call_close_app() -> void:
 
 ## 示例：获取菜单按钮边界矩形
 ## on_result 回调签名约定：func _cb(result: Dictionary) -> void
+## 仅在 RN 回包后调用 on_result（不再在请求前用缓存同步回调，避免与「容器就绪」语义冲突）
 func call_get_menu_button_bounding_client_rect(on_result: Callable = Callable()) -> void:
-	on_result.call(_menu_button_bounding_client_rect)
-	call_rn(
+	_call_rn_immediate(
 		"getMenuButtonBoundingClientRect",
 		{},
 		func (data: Dictionary):
@@ -164,10 +239,11 @@ func call_get_menu_button_bounding_client_rect(on_result: Callable = Callable())
 					"height": result.get("height", 0)
 				}
 				_menu_button_bounding_client_rect = rect
+				if _rect_is_nonzero(rect):
+					_mark_rn_container_ready()
 				if on_result.is_valid():
 					on_result.call(_menu_button_bounding_client_rect)
 			else:
 				if on_result.is_valid():
 					on_result.call({ "top": 0, "right": 0, "bottom": 0, "left": 0, "width": 0, "height": 0 })
 	)
-	

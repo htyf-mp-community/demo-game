@@ -21,15 +21,16 @@ func _game_resume():
 func _ready() -> void:
 	setting.visible = false
 	death.visible = false
-
-func _notification(what: int) -> void:
-	if what == NOTIFICATION_APPLICATION_FOCUS_OUT:
-		print("进入后台，暂停游戏")
-		_game_pause()
-	if what == NOTIFICATION_APPLICATION_FOCUS_IN:
-		print("回到前台，恢复游戏")
-		_game_pause()
-		
+	HtyfSdk.set_host_lifecycle_callback(
+		func (what: int): 
+			if what == NOTIFICATION_APPLICATION_FOCUS_OUT:
+				HtyfSdk.log("进入后台，暂停游戏")
+				_game_pause()
+			if what == NOTIFICATION_APPLICATION_FOCUS_IN:
+				HtyfSdk.log("回到前台，恢复游戏")
+				_game_pause()
+			
+	)
 
 
 func _on_setting_pressed() -> void:
