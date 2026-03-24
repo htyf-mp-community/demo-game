@@ -1,5 +1,4 @@
 extends Node
-@onready var score_label: Label = %ScoreLabel
 signal state_changed
 
 var state = {
@@ -24,7 +23,7 @@ var state = {
 func set_state(updater: Callable):
 	var new_state = updater.call(state.duplicate(true))
 	state = new_state
-	emit_signal("state_changed")
+	emit_signal("state_changed", new_state)
 	
 
 func _ready() -> void:
@@ -49,7 +48,7 @@ func _ready() -> void:
 				HtyfSdk.log("回到前台，恢复游戏")
 				self.set_state(
 					func(s):
-						s.isBackground = true
+						s.isBackground = false
 						return s
 				)
 			
@@ -61,7 +60,6 @@ func add_point():
 		func(s):
 			s.score += 1	
 			print(s.score)
-			score_label.text = '$ ' + str(s.score)
 			return s
 	)
 	
@@ -79,8 +77,36 @@ func change_scene(path: String, params := {}) -> void:
 	tree.paused = false
 	
 func run_game():
+	self.set_state(
+		func(s):
+			s.status = 'game'	
+			return s
+	)
 	change_scene("res://scenes/game.tscn")
 
 func exit_game() -> void:
+	self.set_state(
+		func(s):
+			s.status = 'title'	
+			return s
+	)
 	change_scene("res://scenes/title_screen.tscn")
 	
+func death():
+	self.set_state(
+		func(s):
+			s.status = 'death'	
+			return s
+	)
+
+func restart(): 
+	self.set_state(
+		func(s):
+			s.status = 'game'	
+			return s
+	)
+	var tree := get_tree()
+	if tree:
+		# 先取消暂停，避免重载后仍保持 paused 状态。
+		tree.paused = false
+		tree.reload_current_scene()

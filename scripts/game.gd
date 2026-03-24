@@ -21,8 +21,11 @@ func _game_resume():
 func _ready() -> void:
 	setting.visible = false
 	death.visible = false
-	GameManager.connect("state_changed", func ():
-		print("222222")
+	GameManager.connect("state_changed", func (state):
+		if state.status == 'death':
+			death.visible = true
+			Engine.time_scale = 1.0
+			get_tree().paused = true
 	)
 	HtyfSdk.set_host_lifecycle_callback(
 		func (what: int): 

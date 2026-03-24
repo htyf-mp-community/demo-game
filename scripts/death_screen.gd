@@ -13,11 +13,7 @@ func _process(delta: float) -> void:
 
 
 func _on_restart_pressed() -> void:
-	var tree := get_tree()
-	if tree:
-		# 先取消暂停，避免重载后仍保持 paused 状态。
-		tree.paused = false
-		tree.reload_current_scene()
+	GameManager.restart()
 
 
 func _on_exit_pressed() -> void:

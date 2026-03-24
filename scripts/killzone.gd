@@ -12,7 +12,8 @@ func _on_body_entered(body: Node2D) -> void:
 
 
 func _on_timer_timeout() -> void:
-	death.visible = true
-	Engine.time_scale = 1.0
-	get_tree().paused = true
+	GameManager.death()
+	#death.visible = true
+	#Engine.time_scale = 1.0
+	#get_tree().paused = true
 	pass # Replace with function body.
