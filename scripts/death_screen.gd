@@ -21,5 +21,5 @@ func _on_restart_pressed() -> void:
 
 
 func _on_exit_pressed() -> void:
-	GameManager._exit_change_scene()
+	GameManager.exit_game()
 	pass # Replace with function body.

@@ -7,7 +7,7 @@ func _ready() -> void:
 		
 func _on_new_game_pressed() -> void:
 	HtyfSdk.log("开始新游戏")
-	GameManager.change_scene("res://scenes/game.tscn", {})
+	GameManager.run_game()
 
 
 func _on_load_game_pressed() -> void:

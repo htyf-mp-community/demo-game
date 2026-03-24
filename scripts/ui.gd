@@ -1,9 +1,15 @@
 extends CanvasLayer
 
 @onready var setting: Button = $Setting
+@onready var score_label: Label = %ScoreLabel
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	# 推荐写法：用 Signal 对象连接（与字符串 "state_changed" 等价，但更清晰）。
+	# 注意：只有 GameManager.set_state() 会 emit state_changed；若连接后没有任何状态更新，这里不会打印。
+	if not GameManager.state_changed.is_connected(_on_state_changed):
+		GameManager.state_changed.connect(_on_state_changed)
+	_on_state_changed() # 同步当前 state（避免连接前已 emit 错过首帧）
 	HtyfSdk.call_get_menu_button_bounding_client_rect(
 		func (result): 
 			var rect = result
@@ -22,3 +28,7 @@ func _ready() -> void:
 			print("setting.offset_top: "+ str(setting.offset_top))
 			print("setting.offset_right: "+ str(setting.offset_right))
 	)
+   
+func _on_state_changed() -> void:
+	print("state_changed")
+	score_label.text = '$ ' + str(GameManager.state.score)

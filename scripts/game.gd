@@ -21,6 +21,9 @@ func _game_resume():
 func _ready() -> void:
 	setting.visible = false
 	death.visible = false
+	GameManager.connect("state_changed", func ():
+		print("222222")
+	)
 	HtyfSdk.set_host_lifecycle_callback(
 		func (what: int): 
 			if what == NOTIFICATION_APPLICATION_FOCUS_OUT:

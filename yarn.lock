@@ -465,10 +465,10 @@
     webpack "^5.101.0"
     webpack-cli "^6.0.1"
 
-"@htyf-mp/js-sdk@0.2.17":
-  version "0.2.17"
-  resolved "https://registry.yarnpkg.com/@htyf-mp/js-sdk/-/js-sdk-0.2.17.tgz#9fd127d96e6f9f4d9db6abcd903667fa5a771d72"
-  integrity sha512-zR1i6Gr0MmAOC6SJbHk7rFVcNaKWaA6merZqvISw1K30OVAkreLENldVA39BbLtqiuWODdeM+wdAntJftlKqlA==
+"@htyf-mp/js-sdk@0.2.19":
+  version "0.2.19"
+  resolved "https://registry.yarnpkg.com/@htyf-mp/js-sdk/-/js-sdk-0.2.19.tgz#2066173be4771f0cd994dda15d39d0af43564604"
+  integrity sha512-zhxqsbEMns1CJkM+hgi2FZPAIynnG7XZ6EK5jxjFgTRsbTAT0tT/M0dsQNjOiYMdITWGsAmf859VlHO+YyEslA==
 
 "@inquirer/ansi@^1.0.2":
   version "1.0.2"

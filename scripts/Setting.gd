@@ -8,5 +8,5 @@ func _on_start_pressed() -> void:
 
 
 func _on_button_pressed() -> void:
-	GameManager._exit_change_scene()
+	GameManager.exit_game()
 	print("退出")
