@@ -456,9 +456,7 @@ libraries = {
 autoplay = "move"
 
 [node name="Setting" parent="." instance=ExtResource("1_kvpfn")]
-unique_name_in_owner = true
 
 [node name="Death" parent="." instance=ExtResource("14_trtic")]
-unique_name_in_owner = true
 
 [connection signal="pressed" from="UI/Setting" to="." method="_on_setting_pressed"]

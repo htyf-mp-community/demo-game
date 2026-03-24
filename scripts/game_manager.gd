@@ -77,6 +77,8 @@ func change_scene(path: String, params := {}) -> void:
 	tree.paused = false
 	
 func run_game():
+	if state.status == "game":
+		return
 	self.set_state(
 		func(s):
 			s.status = 'game'	
@@ -85,6 +87,8 @@ func run_game():
 	change_scene("res://scenes/game.tscn")
 
 func exit_game() -> void:
+	if state.status == "title":
+		return
 	self.set_state(
 		func(s):
 			s.status = 'title'	
@@ -93,13 +97,41 @@ func exit_game() -> void:
 	change_scene("res://scenes/title_screen.tscn")
 	
 func death():
+	if state.status == "death":
+		return
 	self.set_state(
 		func(s):
 			s.status = 'death'	
 			return s
 	)
+	Engine.time_scale = 1.0
+	get_tree().paused = true
 
+func pause():
+	if state.status == "setting":
+		return
+	self.set_state(
+		func(s):
+			s.status = 'setting'	
+			return s
+	)
+	get_tree().paused = true
+
+func resume():
+	if state.status == "game":
+		return
+	self.set_state(
+		func(s):
+			s.status = 'game'	
+			return s
+	)
+	Engine.time_scale = 1.0
+	get_tree().paused = false
+
+	
 func restart(): 
+	if state.status == "game":
+		return
 	self.set_state(
 		func(s):
 			s.status = 'game'	

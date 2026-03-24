@@ -3,7 +3,11 @@ extends CanvasLayer
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	
+	self.visible = false
+	GameManager.connect("state_changed", func (state):
+		if state.status == 'death':
+			self.visible = true
+	)
 	pass # Replace with function body.
 
 

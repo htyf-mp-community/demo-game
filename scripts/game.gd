@@ -1,54 +1,15 @@
 extends Node2D
-@onready var setting: CanvasLayer = %Setting
-@onready var death: CanvasLayer = %Death
 
-func alert(text):
-	var dialog = AcceptDialog.new()
-	dialog.dialog_text = text
-	add_child(dialog)
-	dialog.popup_centered()
-	
-# 暂停游戏
-func _game_pause():
-	get_tree().paused = true
-	setting.visible = true
-# 继续游戏
-func _game_resume():
-	get_tree().paused = false
-	setting.visible = false
-	
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	setting.visible = false
-	death.visible = false
 	GameManager.connect("state_changed", func (state):
-		if state.status == 'death':
-			death.visible = true
-			Engine.time_scale = 1.0
-			get_tree().paused = true
-	)
-	HtyfSdk.set_host_lifecycle_callback(
-		func (what: int): 
-			if what == NOTIFICATION_APPLICATION_FOCUS_OUT:
-				HtyfSdk.log("进入后台，暂停游戏")
-				_game_pause()
-			if what == NOTIFICATION_APPLICATION_FOCUS_IN:
-				HtyfSdk.log("回到前台，恢复游戏")
-				_game_pause()
-			
+		# 避免后台回调触发后重复调用 pause()，导致 set_state->emit 递归。
+		if state.isBackground == true and state.status != "setting":
+			GameManager.pause()
 	)
 
 
 func _on_setting_pressed() -> void:
-	_game_pause();
+	GameManager.pause()
 	pass # Replace with function body.
 	
-func change_scene(path: String, params := {}) -> void:
-	var tree := get_tree()
-	#tree.paused = true
-
-	tree.change_scene_to_file(path)
-	if "init" in params:
-		params.init.call()
-	
-	await tree.tree_changed
