@@ -7,6 +7,6 @@
     "appid": "fe27d0d96e8fe86bce2eb341386c9f37",
     "appUrlConfig": "https://hongtangyun-1252095557.cos.ap-chengdu.myqcloud.com/assets/testMiniApps/appstore/plugin/game/app.json",
     "zipUrl": "https://hongtangyun-1252095557.cos.ap-chengdu.myqcloud.com/assets/testMiniApps/appstore/plugin/game/dist.[PLATFORM].dgz",
-    "version": "1.0.104"
+    "version": "1.0.106"
   }
 }

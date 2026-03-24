@@ -23,3 +23,8 @@ func _on_restart_pressed() -> void:
 func _on_exit_pressed() -> void:
 	GameManager.exit_game()
 	pass # Replace with function body.
+
+
+func _on_ad_pressed() -> void:
+	HtyfSdk.call_show_interstitial_ad()
+	pass # Replace with function body.

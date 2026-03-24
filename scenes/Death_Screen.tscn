@@ -35,5 +35,10 @@ text = "重新开始"
 layout_mode = 2
 text = "退出"
 
+[node name="Ad" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "看广告"
+
 [connection signal="pressed" from="VBoxContainer/Restart" to="." method="_on_restart_pressed"]
 [connection signal="pressed" from="VBoxContainer/Exit" to="." method="_on_exit_pressed"]
+[connection signal="pressed" from="VBoxContainer/Ad" to="." method="_on_ad_pressed"]
