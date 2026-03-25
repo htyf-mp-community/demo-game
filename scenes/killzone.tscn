@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://1cxo1xyf4oq0"]
+[gd_scene load_steps=3 format=3 uid="uid://1cxo1xyf4oq0"]
 
 [ext_resource type="Script" uid="uid://dgb3nw8r1h4eo" path="res://scripts/killzone.gd" id="1_xlapc"]
+[ext_resource type="AudioStream" uid="uid://6h01o28gwvlw" path="res://assets/sounds/hurt.wav" id="2_kl8fp"]
 
 [node name="Killzone" type="Area2D"]
 collision_mask = 2
@@ -9,6 +10,9 @@ script = ExtResource("1_xlapc")
 [node name="Timer" type="Timer" parent="."]
 wait_time = 0.6
 one_shot = true
+
+[node name="hurt_soud" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("2_kl8fp")
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

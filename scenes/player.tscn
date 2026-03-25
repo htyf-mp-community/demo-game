@@ -1,7 +1,8 @@
-[gd_scene load_steps=31 format=3 uid="uid://diy1rbnx7ofgo"]
+[gd_scene load_steps=32 format=3 uid="uid://diy1rbnx7ofgo"]
 
 [ext_resource type="Texture2D" uid="uid://htrlxts7mobq" path="res://assets/sprites/knight.png" id="1_3vyb7"]
 [ext_resource type="Script" uid="uid://whx1jb1rcwdx" path="res://scripts/player.gd" id="1_g2els"]
+[ext_resource type="AudioStream" uid="uid://btdkgmsvnwvtc" path="res://assets/sounds/jump.wav" id="3_qhqgy"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_g2els"]
 atlas = ExtResource("1_3vyb7")
@@ -212,10 +213,15 @@ script = ExtResource("1_g2els")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_u8vuu")
-animation = &"idle"
+animation = &"jump"
 autoplay = "idle"
-frame_progress = 0.35195124
+frame_progress = 0.8000223
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(-1, 4)
 shape = SubResource("CircleShape2D_tuyoq")
+
+[node name="JumpSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_qhqgy")
+
+[connection signal="frame_changed" from="AnimatedSprite2D" to="." method="_on_animated_sprite_2d_frame_changed"]
