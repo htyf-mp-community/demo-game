@@ -9,6 +9,7 @@ var state = {
 	"scene": "title",
 	"isBackground": false,
 	"score": 0,
+	"isDeath": false,
 	"menuBtonBoundingClientRect": {
 		"top": 0, 
 		"right": 0, 
@@ -67,20 +68,32 @@ func add_point():
 func change_scene(path: String, params := {}) -> void:
 	Engine.time_scale = 1.0
 	var tree := get_tree()
-	tree.paused = true
+	var animation_player := Transition.find_child("AnimationPlayer") as AnimationPlayer
+	
+	tree.paused = false
 
+	# 先淡出再切场景。不要在淡出前暂停树，否则动画可能不更新导致卡住。
+	if animation_player:
+		animation_player.play("fade_out")
+		await animation_player.animation_finished
+	
 	tree.change_scene_to_file(path)
+	
+	if animation_player:
+			animation_player.play("fade_in")
+			await animation_player.animation_finished
+	
+
 	if "init" in params:
 		params.init.call()
 	
-	await tree.tree_changed
-	tree.paused = false
 	
 func run_game():
 	if state.status == "game":
 		return
 	self.set_state(
 		func(s):
+			s.isDeath = false
 			s.status = 'game'	
 			return s
 	)
@@ -91,6 +104,7 @@ func exit_game() -> void:
 		return
 	self.set_state(
 		func(s):
+			s.isDeath = false
 			s.status = 'title'	
 			return s
 	)
@@ -101,11 +115,12 @@ func death():
 		return
 	self.set_state(
 		func(s):
+			s.isDeath = true
 			s.status = 'death'	
 			return s
 	)
 	Engine.time_scale = 1.0
-	get_tree().paused = true
+	#get_tree().paused = true
 
 func pause():
 	if state.status == "setting":
@@ -122,6 +137,7 @@ func resume():
 		return
 	self.set_state(
 		func(s):
+			s.isDeath = false
 			s.status = 'game'	
 			return s
 	)
@@ -134,6 +150,7 @@ func restart():
 		return
 	self.set_state(
 		func(s):
+			s.isDeath = false
 			s.status = 'game'	
 			return s
 	)

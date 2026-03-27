@@ -25,6 +25,7 @@ buses/default_bus_layout=""
 Music="*res://scenes/music.tscn"
 HtyfSdk="*res://_HTYF_SDK/htyf_sdk.tscn"
 GameManager="*res://scripts/game_manager.gd"
+Transition="*res://scenes/transition.tscn"
 
 [display]
 
