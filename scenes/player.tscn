@@ -259,7 +259,7 @@ shape = SubResource("CircleShape2D_tuyoq")
 [node name="JumpSound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("3_qhqgy")
 
-[node name="DeathSound" type="AudioStreamPlayer2D" parent="."]
+[node name="DeathSound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("4_dqkch")
 
 [connection signal="frame_changed" from="AnimatedSprite2D" to="." method="_on_animated_sprite_2d_frame_changed"]

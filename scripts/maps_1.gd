@@ -18,6 +18,8 @@ func _ready() -> void:
 	# 重置相机平滑
 	camera_2d.reset_smoothing()
 	
+	
+	
 	pass # Replace with function body.
 
 

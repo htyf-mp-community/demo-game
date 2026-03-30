@@ -41,11 +41,12 @@ offset_bottom = 47.0
 grow_horizontal = 0
 text = "设置"
 
-[node name="Maps_1" parent="." instance=ExtResource("2_kvuet")]
-position = Vector2(-323, -188)
-
 [node name="Setting" parent="." instance=ExtResource("1_kvpfn")]
 
 [node name="Death" parent="." instance=ExtResource("14_trtic")]
+
+[node name="MapRoot" type="Node" parent="."]
+
+[node name="Maps_1" parent="MapRoot" instance=ExtResource("2_kvuet")]
 
 [connection signal="pressed" from="UI/Setting" to="." method="_on_setting_pressed"]

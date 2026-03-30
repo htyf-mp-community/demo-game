@@ -11,6 +11,8 @@ func _on_new_game_pressed() -> void:
 
 
 func _on_load_game_pressed() -> void:
+	HtyfSdk.log("加载历史")
+	GameManager.load_game()
 	pass # Replace with function body.
 	
 
