@@ -9,9 +9,32 @@ const JUMP_VELOCITY = -300.0
 @onready var death_sound: AudioStreamPlayer = $DeathSound
 @onready var camera_2d: Camera2D = $Camera2D
 
+var config = null
+
+func init(options = {}):
+	config = options
+	self.global_position = Vector2(options.get("x", 0), options.get("y", 0))
+	
+
 func _ready() -> void:
-	# 重置相机平滑
-	camera_2d.reset_smoothing()
+	# 根据 TileMap 已使用区域计算相机可移动边界，防止镜头超出地图。
+	if config != null:
+		self.global_position = Vector2(config.get("x", 0), config.get("y", 0))
+		camera_2d.limit_top = config.get('limit_top', -10000000)
+		camera_2d.limit_right = config.get('limit_right', 10000000)
+		camera_2d.limit_bottom = config.get('limit_bottom', 10000000)
+		camera_2d.limit_left = config.get('limit_left', -10000000)
+		print("xxxxx", config)
+		# 重置相机平滑
+		camera_2d.reset_smoothing()
+		
+		var dir = config.get("dir", "right")
+		if animated_sprite_2d != null:
+			if dir == "right":
+				animated_sprite_2d.flip_h = false
+			elif dir == "left":
+				animated_sprite_2d.flip_h = true
+	
 	GameManager.connect("state_changed", 
 		func (s): 
 			if s.isDeath == true:
@@ -65,5 +88,4 @@ func _on_animated_sprite_2d_frame_changed() -> void:
 				jump_sound.play()
 			if animation == 'death':
 				death_sound.play()
-		
 		

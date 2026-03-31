@@ -1,8 +1,10 @@
-[gd_scene load_steps=12 format=4 uid="uid://y3iqmukdffxy"]
+[gd_scene load_steps=14 format=4 uid="uid://y3iqmukdffxy"]
 
+[ext_resource type="Script" uid="uid://c2wrfyebfnx0e" path="res://scripts/maps_2.gd" id="1_xl1wv"]
 [ext_resource type="Texture2D" uid="uid://bb4u02liig15i" path="res://assets/sprites/world_tileset.png" id="1_yqdyt"]
 [ext_resource type="PackedScene" uid="uid://1cxo1xyf4oq0" path="res://scenes/killzone.tscn" id="3_xl1wv"]
 [ext_resource type="PackedScene" uid="uid://dw34vah3xvy4p" path="res://scenes/Platform.tscn" id="4_38hcx"]
+[ext_resource type="PackedScene" uid="uid://crnr0qnjr3ey0" path="res://scenes/Door.tscn" id="5_opi5b"]
 [ext_resource type="PackedScene" uid="uid://bjflk3ifhf86x" path="res://scenes/coin.tscn" id="5_y8jj5"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_yqdyt"]
@@ -349,6 +351,7 @@ _data = {
 }
 
 [node name="Maps_2" type="Node2D"]
+script = ExtResource("1_xl1wv")
 
 [node name="ParallaxBackground" type="ParallaxBackground" parent="."]
 
@@ -432,3 +435,6 @@ position = Vector2(1292, 39)
 
 [node name="Coin" parent="Coins" instance=ExtResource("5_y8jj5")]
 position = Vector2(247, 231)
+
+[node name="Door" parent="." instance=ExtResource("5_opi5b")]
+position = Vector2(88, 134)

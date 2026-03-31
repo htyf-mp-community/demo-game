@@ -185,22 +185,34 @@ func change_map(map_name = "maps_1"):
 	var spawn = cur_map.get("spawn", {})
 	var spawn_position = spawn.get("default", {
 		"x": 0,
-		"y": 0
+		"y": 0,
+		"dir": "right"
 	})
 	print(spawn_position)
 	# 加载新地图
 	var new_map = load(tscn).instantiate()
+	map_root.add_child(new_map)
 	
 	var player = load("res://scenes/Player.tscn").instantiate()
-	player.global_position = Vector2(spawn_position.get("x", 0), spawn_position.get("y", 0))
-	var dir = spawn_position.get("dir", "right")
-	if dir == "right":
-		player.find_child("AnimatedSprite2D").flip_h = false
-	if dir == "left":
-		player.find_child("AnimatedSprite2D").flip_h = true
+	
+	# 加载地图完成后获取相机limit
+	var limit = new_map.get_camera_2d_limit()
+	
+	player.init({
+		"x": spawn_position.x,
+		"y": spawn_position.y,
+		"dir": spawn_position.dir,
+		"limit_top": limit.get('limit_top', -10000000),
+		"limit_right": limit.get('limit_right', 10000000),
+		"limit_bottom": limit.get('limit_bottom', 10000000),
+		"limit_left": limit.get('limit_left', -10000000)
+	})
+	
 	new_map.add_child(player) 
 	
-	map_root.add_child(new_map)
+	
+	
+	
 	
 	
 
