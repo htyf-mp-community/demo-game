@@ -3,4 +3,4 @@ extends Area2D
 
 func _on_body_entered(body: Node2D) -> void:
 	print("xxxxxxx")
-	GameManager.change_map()
+	GameManager.change_map("maps_2")

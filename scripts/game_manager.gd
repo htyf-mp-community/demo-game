@@ -3,6 +3,8 @@ signal state_changed
 
 const SAVE_FILE_PATH = "user://save_game.json"
 
+const MAPS_CONFIG_FILE_PATH = "res://scenes/maps/index.json"
+
 var state = {
 	"scene_path": "",
 	# 当前游戏状态：'running' | 'paused' | 'gameover' | 'title' | 'setting' | 'death'
@@ -31,6 +33,7 @@ func set_state(updater: Callable):
 	
 
 func _ready() -> void:
+	load_map()
 	HtyfSdk.call_get_menu_button_bounding_client_rect(
 		func (result): 
 			self.set_state(
@@ -58,6 +61,15 @@ func _ready() -> void:
 			
 	)
 
+func load_map():
+	print("load map")
+	var file = FileAccess.open(MAPS_CONFIG_FILE_PATH, FileAccess.READ)
+	if not file:
+		print("Error loading game: file is null")
+		return
+	var json = JSON.new()
+	var data = json.parse(file.get_as_text())
+	return json.data
 
 func add_point(): 
 	self.set_state(
@@ -67,7 +79,6 @@ func add_point():
 			return s
 	)
 	
-
 func change_scene(path: String, params := {}) -> void:
 	Engine.time_scale = 1.0
 	var tree := get_tree()
@@ -148,7 +159,6 @@ func resume():
 	Engine.time_scale = 1.0
 	get_tree().paused = false
 
-	
 func restart(): 
 	if state.status == "game":
 		return
@@ -164,15 +174,35 @@ func restart():
 		tree.paused = false
 		tree.reload_current_scene()
 		
-func change_map():
+func change_map(map_name = "maps_1"):
 	var map_root = get_tree().current_scene.get_node("MapRoot")
 	# 删除旧地图
 	if map_root.get_child_count() > 0:
 		map_root.get_child(0).queue_free()
-
+	var maps = load_map()
+	var cur_map = maps.get(map_name, {})
+	var tscn = cur_map.get("file", "")
+	var spawn = cur_map.get("spawn", {})
+	var spawn_position = spawn.get("default", {
+		"x": 0,
+		"y": 0
+	})
+	print(spawn_position)
 	# 加载新地图
-	var new_map = load("res://scenes/maps/maps_2.tscn").instantiate()
+	var new_map = load(tscn).instantiate()
+	
+	var player = load("res://scenes/Player.tscn").instantiate()
+	player.global_position = Vector2(spawn_position.get("x", 0), spawn_position.get("y", 0))
+	var dir = spawn_position.get("dir", "right")
+	if dir == "right":
+		player.find_child("AnimatedSprite2D").flip_h = false
+	if dir == "left":
+		player.find_child("AnimatedSprite2D").flip_h = true
+	new_map.add_child(player) 
+	
 	map_root.add_child(new_map)
+	
+	
 
 func save_game():
 	var file = FileAccess.open(SAVE_FILE_PATH, FileAccess.WRITE)
@@ -191,10 +221,10 @@ func load_game():
 		return
 	var json = JSON.new()
 	var data = json.parse(file.get_as_text())
-	print(data)
+	print(json.data)
 	
 	if data:
-		state = data.result
+		state = json.data
 		if state.scene_path != "":
 			self.change_scene(state.scene_path)
 		#self.change_scene("")

@@ -7,8 +7,11 @@ const JUMP_VELOCITY = -300.0
 @onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
 @onready var jump_sound: AudioStreamPlayer = $JumpSound
 @onready var death_sound: AudioStreamPlayer = $DeathSound
+@onready var camera_2d: Camera2D = $Camera2D
 
 func _ready() -> void:
+	# 重置相机平滑
+	camera_2d.reset_smoothing()
 	GameManager.connect("state_changed", 
 		func (s): 
 			if s.isDeath == true:

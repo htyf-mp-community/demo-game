@@ -17,3 +17,8 @@ func _process(delta: float) -> void:
 		animated_sprite_2d.flip_h = false
 		
 	position.x += direction * SPEED * delta
+
+
+func _on_body_entered(body: Node2D) -> void:
+	#GameManager.death()
+	pass # Replace with function body.

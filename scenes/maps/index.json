@@ -1,0 +1,29 @@
+{
+  "maps_1": {
+	"file": "res://scenes/maps/maps_1.tscn",
+	"name": "地图1",
+	"spawn": {
+	  "default": {
+		"x": 152,
+		"y": 264,
+		"dir": "right"
+	  },
+	  "from_maps_2": {
+		"x": 632,
+		"y": 234,
+		"dir": "left"
+	  }
+	}
+  },
+  "maps_2": {
+	"file": "res://scenes/maps/maps_2.tscn",
+	"name": "地图2",
+	"spawn": {
+	  "default": {
+		"x": 116,
+		"y": 128,
+		"dir": "right"
+	  },
+	}
+  }
+}

@@ -1,11 +1,10 @@
-[gd_scene load_steps=17 format=4 uid="uid://inju3781vfvj"]
+[gd_scene load_steps=15 format=4 uid="uid://inju3781vfvj"]
 
 [ext_resource type="Script" uid="uid://x1wvl1jd1gyl" path="res://scripts/maps_1.gd" id="1_b06ak"]
 [ext_resource type="Texture2D" uid="uid://bb4u02liig15i" path="res://assets/sprites/world_tileset.png" id="1_xne3j"]
 [ext_resource type="PackedScene" uid="uid://bjflk3ifhf86x" path="res://scenes/coin.tscn" id="2_jicip"]
 [ext_resource type="PackedScene" uid="uid://kp1nekuk7iqi" path="res://scenes/slime.tscn" id="3_tjx36"]
 [ext_resource type="PackedScene" uid="uid://dw34vah3xvy4p" path="res://scenes/Platform.tscn" id="4_tjx36"]
-[ext_resource type="PackedScene" uid="uid://diy1rbnx7ofgo" path="res://scenes/player.tscn" id="5_hib5n"]
 [ext_resource type="PackedScene" uid="uid://1cxo1xyf4oq0" path="res://scenes/killzone.tscn" id="6_fes50"]
 [ext_resource type="PackedScene" uid="uid://crnr0qnjr3ey0" path="res://scenes/Door.tscn" id="8_7e1mf"]
 
@@ -354,8 +353,6 @@ _data = {
 &"new_animation": SubResource("Animation_tjx36")
 }
 
-[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_b06ak"]
-
 [node name="Maps_1" type="Node2D"]
 script = ExtResource("1_b06ak")
 metadata/_edit_vertical_guides_ = [0.0]
@@ -396,22 +393,8 @@ libraries = {
 }
 autoplay = "new_animation"
 
-[node name="Player" parent="." instance=ExtResource("5_hib5n")]
-z_index = 5
-position = Vector2(152, 264)
-
-[node name="Camera2D" type="Camera2D" parent="Player"]
-position = Vector2(0, 1)
-zoom = Vector2(2, 2)
-limit_smoothed = true
-position_smoothing_enabled = true
-
 [node name="Killzone" parent="." instance=ExtResource("6_fes50")]
-position = Vector2(0, 140)
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Killzone"]
-position = Vector2(4, 218)
-shape = SubResource("WorldBoundaryShape2D_b06ak")
+position = Vector2(343, 486)
 
 [node name="Door" parent="." instance=ExtResource("8_7e1mf")]
 position = Vector2(632, 234)
