@@ -1,9 +1,17 @@
 extends Node2D
 
 @onready var tile_map_layer: TileMapLayer = $TileMapLayer
+@onready var back_door: Area2D = $BackDoor
 
+var config = null
+
+func init(options = {}):
+	config = options
+	
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	if config != null:
+		back_door.init(config.get('back', {}))
 	pass # Replace with function body.
 
 

@@ -174,8 +174,8 @@ func restart():
 		tree.paused = false
 		tree.reload_current_scene()
 		
-func change_map(map_name = "maps_1"):
-	var map_root = get_tree().current_scene.get_node("MapRoot")
+func change_map(map_name = "maps_1", options = {}):
+	var map_root := get_tree().current_scene.get_node("MapRoot")
 	# 删除旧地图
 	if map_root.get_child_count() > 0:
 		map_root.get_child(0).queue_free()
@@ -188,25 +188,44 @@ func change_map(map_name = "maps_1"):
 		"y": 0,
 		"dir": "right"
 	})
-	print(spawn_position)
 	# 加载新地图
 	var new_map = load(tscn).instantiate()
+	new_map.init({
+		"back": {
+			"target": "maps_1",
+			"x": 600,
+			"y": 234,
+			"dir": "left"
+		}
+	})
 	map_root.add_child(new_map)
 	
 	var player = load("res://scenes/Player.tscn").instantiate()
 	
 	# 加载地图完成后获取相机limit
 	var limit = new_map.get_camera_2d_limit()
-	
-	player.init({
-		"x": spawn_position.x,
-		"y": spawn_position.y,
-		"dir": spawn_position.dir,
-		"limit_top": limit.get('limit_top', -10000000),
-		"limit_right": limit.get('limit_right', 10000000),
-		"limit_bottom": limit.get('limit_bottom', 10000000),
-		"limit_left": limit.get('limit_left', -10000000)
-	})
+	var back = options.get("back")
+	print("xxxxssss", back)
+	if back != null:
+		player.init({
+			"x": back.x,
+			"y": back.y,
+			"dir": back.dir,
+			"limit_top": limit.get('limit_top', -10000000),
+			"limit_right": limit.get('limit_right', 10000000),
+			"limit_bottom": limit.get('limit_bottom', 10000000),
+			"limit_left": limit.get('limit_left', -10000000)
+		})
+	else:
+		player.init({
+			"x": spawn_position.x,
+			"y": spawn_position.y,
+			"dir": spawn_position.dir,
+			"limit_top": limit.get('limit_top', -10000000),
+			"limit_right": limit.get('limit_right', 10000000),
+			"limit_bottom": limit.get('limit_bottom', 10000000),
+			"limit_left": limit.get('limit_left', -10000000)
+		})
 	
 	new_map.add_child(player) 
 	

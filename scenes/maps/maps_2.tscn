@@ -4,8 +4,8 @@
 [ext_resource type="Texture2D" uid="uid://bb4u02liig15i" path="res://assets/sprites/world_tileset.png" id="1_yqdyt"]
 [ext_resource type="PackedScene" uid="uid://1cxo1xyf4oq0" path="res://scenes/killzone.tscn" id="3_xl1wv"]
 [ext_resource type="PackedScene" uid="uid://dw34vah3xvy4p" path="res://scenes/Platform.tscn" id="4_38hcx"]
-[ext_resource type="PackedScene" uid="uid://crnr0qnjr3ey0" path="res://scenes/Door.tscn" id="5_opi5b"]
 [ext_resource type="PackedScene" uid="uid://bjflk3ifhf86x" path="res://scenes/coin.tscn" id="5_y8jj5"]
+[ext_resource type="PackedScene" uid="uid://5orqa6b6pu11" path="res://scenes/Back_door.tscn" id="6_xl1wv"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_yqdyt"]
 texture = ExtResource("1_yqdyt")
@@ -436,5 +436,5 @@ position = Vector2(1292, 39)
 [node name="Coin" parent="Coins" instance=ExtResource("5_y8jj5")]
 position = Vector2(247, 231)
 
-[node name="Door" parent="." instance=ExtResource("5_opi5b")]
-position = Vector2(88, 134)
+[node name="BackDoor" parent="." instance=ExtResource("6_xl1wv")]
+position = Vector2(89, 134)

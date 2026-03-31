@@ -8,8 +8,8 @@
 		"y": 264,
 		"dir": "right"
 	  },
-	  "from_maps_2": {
-		"x": 632,
+	  "back": {
+		"x": 600,
 		"y": 234,
 		"dir": "left"
 	  }
