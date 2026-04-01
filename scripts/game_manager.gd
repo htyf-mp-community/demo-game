@@ -22,7 +22,9 @@ var state = {
 		"left": 0, 
 		"width": 0, 
 		"height": 0 
-	}
+	},
+	"maps_config": {},
+	"maps_hostory": []
 }
 
 # ===== 核心 set 方法 =====
@@ -69,6 +71,11 @@ func load_map():
 		return
 	var json = JSON.new()
 	var data = json.parse(file.get_as_text())
+	self.set_state(
+		func(s):
+			s.maps_config = data	
+			return s
+	)
 	return json.data
 
 func add_point(): 
@@ -78,7 +85,8 @@ func add_point():
 			print(s.score)
 			return s
 	)
-	
+
+# 切换场景
 func change_scene(path: String, params := {}) -> void:
 	Engine.time_scale = 1.0
 	var tree := get_tree()
@@ -173,62 +181,142 @@ func restart():
 		# 先取消暂停，避免重载后仍保持 paused 状态。
 		tree.paused = false
 		tree.reload_current_scene()
-		
-func change_map(map_name = "maps_1", options = {}):
+# 设置地图历史
+func set_maps_hostory(hostory = []):
+	self.set_state(
+		func(s):
+			s.maps_hostory = hostory
+			return s
+	)
+# 删除地图历史中的单条数据
+func delete_maps_hostory_item(map_name: String):
+	self.set_state(
+		func(s):
+			var hostory = s.get("maps_hostory", [])
+			for i in range(hostory.size()):
+				var item = hostory[i]
+				if typeof(item) == TYPE_DICTIONARY and item.get("map_name", "") == map_name:
+					hostory.remove_at(i)
+					break
+			s.maps_hostory = hostory
+			return s
+	)
+# 按 map_name 修改地图历史中的单条数据（增量合并）
+func update_maps_hostory_item(map_name: String, patch := {}):
+	self.set_state(
+		func(s):
+			var hostory = s.get("maps_hostory", [])
+			var target_index := -1
+			for i in range(hostory.size()):
+				var item = hostory[i]
+				if typeof(item) == TYPE_DICTIONARY and item.get("map_name", "") == map_name:
+					target_index = i
+					break
+			if target_index == -1:
+				var new_item = {"map_name": map_name}
+				if typeof(patch) == TYPE_DICTIONARY:
+					new_item = new_item.merged(patch, true)
+				else:
+					new_item["data"] = patch
+				hostory.append(new_item)
+				s.maps_hostory = hostory
+				return s
+			var old_item = hostory[target_index]
+			if typeof(old_item) != TYPE_DICTIONARY or typeof(patch) != TYPE_DICTIONARY:
+				hostory[target_index] = patch
+			else:
+				hostory[target_index] = old_item.merged(patch, true)
+			s.maps_hostory = hostory
+			return s
+	)
+# 获取当前地图数据
+func get_current_map_data():
+	var hostory = state.get("maps_hostory", [])
+	if hostory.is_empty():
+		return {}
+	# 末尾即当前地图
+	return hostory[hostory.size() - 1]
+# 获取前一个地图数据
+func get_prev_map_data():
+	var hostory = state.get("maps_hostory", [])
+	if hostory.size() < 2:
+		return {}
+	# 倒数第二项即上一个地图
+	return hostory[hostory.size() - 2]
+# 切换地图
+func change_map(map_name: String = "maps_1", options: Dictionary = {}) -> void:
 	var map_root := get_tree().current_scene.get_node("MapRoot")
 	# 删除旧地图
 	if map_root.get_child_count() > 0:
 		map_root.get_child(0).queue_free()
-	var maps = load_map()
-	var cur_map = maps.get(map_name, {})
-	var tscn = cur_map.get("file", "")
-	var spawn = cur_map.get("spawn", {})
-	var spawn_position = spawn.get("default", {
+	
+	# 1) 读取目标地图配置，并准备默认出生点
+	var maps: Dictionary = load_map()
+	var next_map: Dictionary = maps.get(map_name, {})
+	var tscn: String = next_map.get("file", "")
+	var spawn: Dictionary = next_map.get("spawn", {})
+	var spawn_position: Dictionary = spawn.get("default", {
 		"x": 0,
 		"y": 0,
 		"dir": "right"
 	})
+	var player_position: Dictionary = spawn_position
+	var is_back: bool = options.get("type", "") == "back"
+	
+	# 2) 先把新地图实例化并挂载，确保后续可以读取相机边界
 	# 加载新地图
 	var new_map = load(tscn).instantiate()
-	new_map.init({
-		"back": {
-			"target": "maps_1",
-			"x": 600,
-			"y": 234,
-			"dir": "left"
-		}
-	})
+	new_map.init({})
 	map_root.add_child(new_map)
-	
+
+	# 3) 维护地图历史，并确定玩家最终出生点
+	if is_back:
+		# back: 回到上一个地图时，出生在“上一个地图记录的退出点”
+		var cur_map_data: Dictionary = self.get_current_map_data()
+		var prev_map_data: Dictionary = self.get_prev_map_data()
+		player_position = prev_map_data.get("exit_point", spawn_position)
+		
+		# 回退后，当前地图记录应从历史中移除
+		self.delete_maps_hostory_item(cur_map_data.get("map_name", ""))
+	else:
+		# forward: 记录当前地图的退出点，供之后 back 使用
+		var exit_point = options.get("exit_point", null)
+		if exit_point != null:
+			var current_map_data: Dictionary = self.get_current_map_data()
+			self.update_maps_hostory_item(current_map_data.get("map_name", ""), {
+				"exit_point": {
+					"x": exit_point.x,
+					"y": exit_point.y,
+					"dir": "right"
+				}
+			})
+
+		# 记录目标地图入口点；不存在则会自动新增历史项
+		self.update_maps_hostory_item(map_name, {
+			"enter_point": {
+				"x": player_position.x,
+				"y": player_position.y,
+				"dir": "right"
+			}
+		})
+
 	var player = load("res://scenes/Player.tscn").instantiate()
 	
-	# 加载地图完成后获取相机limit
-	var limit = new_map.get_camera_2d_limit()
-	var back = options.get("back")
-	print("xxxxssss", back)
-	if back != null:
-		player.init({
-			"x": back.x,
-			"y": back.y,
-			"dir": back.dir,
-			"limit_top": limit.get('limit_top', -10000000),
-			"limit_right": limit.get('limit_right', 10000000),
-			"limit_bottom": limit.get('limit_bottom', 10000000),
-			"limit_left": limit.get('limit_left', -10000000)
-		})
-	else:
-		player.init({
-			"x": spawn_position.x,
-			"y": spawn_position.y,
-			"dir": spawn_position.dir,
-			"limit_top": limit.get('limit_top', -10000000),
-			"limit_right": limit.get('limit_right', 10000000),
-			"limit_bottom": limit.get('limit_bottom', 10000000),
-			"limit_left": limit.get('limit_left', -10000000)
-		})
+	# 4) 使用地图相机边界初始化玩家
+	var limit: Dictionary = new_map.get_camera_2d_limit()
 	
+	player.init({
+		"x": player_position.x,
+		"y": player_position.y,
+		"dir": player_position.dir,
+		"limit_top": limit.get("limit_top", -10000000),
+		"limit_right": limit.get("limit_right", 10000000),
+		"limit_bottom": limit.get("limit_bottom", 10000000),
+		"limit_left": limit.get("limit_left", -10000000)
+	})
+
+	# 最后再把玩家加到地图，避免初始化中引用未就绪节点
 	new_map.add_child(player) 
-	
 	
 	
 	
