@@ -1,29 +1,50 @@
 {
-  "maps_1": {
-	"file": "res://scenes/maps/maps_1.tscn",
-	"name": "地图1",
-	"spawn": {
-	  "default": {
-		"x": 152,
-		"y": 264,
-		"dir": "right"
-	  },
-	  "back": {
-		"x": 600,
-		"y": 234,
-		"dir": "left"
-	  }
+	"maps_1": {
+		"file": "res://scenes/maps/maps_1.tscn",
+		"name": "地图1",
+		"spawn": {
+			"default": {
+				"x": 152.0,
+				"y": 264.0,
+				"dir": "right"
+			},
+			"back": {
+				"x": 600.0,
+				"y": 234.0,
+				"dir": "left"
+			}
+		}
+	},
+	"maps_2": {
+		"file": "res://scenes/maps/maps_2.tscn",
+		"name": "地图2",
+		"spawn": {
+			"default": {
+				"x": 25.0,
+				"y": 261.0,
+				"dir": "right"
+			},
+			"back": {
+				"x": 600.0,
+				"y": 234.0,
+				"dir": "left"
+			}
+		}
+	},
+	"maps_3": {
+		"file": "res://scenes/maps/maps_3.tscn",
+		"name": "地图3",
+		"spawn": {
+			"default": {
+				"x": 25.0,
+				"y": 261.0,
+				"dir": "right"
+			},
+			"back": {
+				"x": 600.0,
+				"y": 234.0,
+				"dir": "left"
+			}
+		}
 	}
-  },
-  "maps_2": {
-	"file": "res://scenes/maps/maps_2.tscn",
-	"name": "地图2",
-	"spawn": {
-	  "default": {
-		"x": 116,
-		"y": 128,
-		"dir": "right"
-	  }
-	}
-  }
 }

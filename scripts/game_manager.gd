@@ -23,6 +23,7 @@ var state = {
 		"width": 0, 
 		"height": 0 
 	},
+	"current_map": "maps_1",
 	"maps_config": {},
 	"maps_hostory": []
 }
@@ -180,7 +181,9 @@ func restart():
 	if tree:
 		# 先取消暂停，避免重载后仍保持 paused 状态。
 		tree.paused = false
-		tree.reload_current_scene()
+		var cur_map = self.get_current_map_data()
+		self.change_map(cur_map.get("map_name"))
+		#tree.reload_current_scene()
 # 设置地图历史
 func set_maps_hostory(hostory = []):
 	self.set_state(
@@ -245,6 +248,18 @@ func get_prev_map_data():
 	return hostory[hostory.size() - 2]
 # 切换地图
 func change_map(map_name: String = "maps_1", options: Dictionary = {}) -> void:
+	if options.get("type", "") != "init":
+		var tree := get_tree()
+		var animation_player := Transition.find_child("AnimationPlayer") as AnimationPlayer
+	
+		tree.paused = false
+
+		# 先淡出再切场景。不要在淡出前暂停树，否则动画可能不更新导致卡住。
+		if animation_player:
+			animation_player.play("fade_out")
+			await animation_player.animation_finished
+	
+
 	var map_root := get_tree().current_scene.get_node("MapRoot")
 	# 删除旧地图
 	if map_root.get_child_count() > 0:
@@ -266,7 +281,7 @@ func change_map(map_name: String = "maps_1", options: Dictionary = {}) -> void:
 	# 2) 先把新地图实例化并挂载，确保后续可以读取相机边界
 	# 加载新地图
 	var new_map = load(tscn).instantiate()
-	new_map.init({})
+	new_map.init()
 	map_root.add_child(new_map)
 
 	# 3) 维护地图历史，并确定玩家最终出生点
@@ -317,6 +332,17 @@ func change_map(map_name: String = "maps_1", options: Dictionary = {}) -> void:
 
 	# 最后再把玩家加到地图，避免初始化中引用未就绪节点
 	new_map.add_child(player) 
+
+	if options.get("type", "") != "init":
+		var tree := get_tree()
+		var animation_player := Transition.find_child("AnimationPlayer") as AnimationPlayer
+	
+		tree.paused = false
+
+		# 先淡出再切场景。不要在淡出前暂停树，否则动画可能不更新导致卡住。
+		if animation_player:
+			animation_player.play("fade_in")
+			await animation_player.animation_finished
 	
 	
 	

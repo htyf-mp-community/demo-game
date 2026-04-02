@@ -2,7 +2,9 @@ extends Node2D
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	GameManager.change_map()
+	GameManager.change_map("maps_1", {
+		"type": "init",
+	})
 	GameManager.connect("state_changed", func (state):
 		# 避免后台回调触发后重复调用 pause()，导致 set_state->emit 递归。
 		if state.isBackground == true and state.status != "setting":

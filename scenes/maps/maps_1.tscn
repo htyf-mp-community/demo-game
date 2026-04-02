@@ -361,7 +361,7 @@ metadata/_edit_horizontal_guides_ = [253.0]
 [node name="ParallaxBackground" type="ParallaxBackground" parent="."]
 
 [node name="Sky" type="ParallaxLayer" parent="ParallaxBackground"]
-motion_scale = Vector2(0.3, 0.1)
+motion_scale = Vector2(0.3, 0.3)
 
 [node name="TileMapLayer" type="TileMapLayer" parent="ParallaxBackground/Sky"]
 position = Vector2(1, 0)

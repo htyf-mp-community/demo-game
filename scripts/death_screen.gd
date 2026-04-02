@@ -7,6 +7,8 @@ func _ready() -> void:
 	GameManager.connect("state_changed", func (state):
 		if state.status == 'death':
 			self.visible = true
+		elif self.visible == true:
+			self.visible = false
 	)
 	pass # Replace with function body.
 

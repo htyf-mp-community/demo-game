@@ -26,7 +26,6 @@ func _on_body_entered(body: Node2D) -> void:
 		if sprite and sprite.texture:
 			body_size = sprite.texture.get_size() * sprite.scale
 	print("进入物体大小:", body_size)
-	print("xxxxxxx")
 	GameManager.change_map(target_map, {
 		"exit_point": {
 			"x": exitPositon.x - 20,
