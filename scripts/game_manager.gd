@@ -182,7 +182,7 @@ func restart():
 		# 先取消暂停，避免重载后仍保持 paused 状态。
 		tree.paused = false
 		var cur_map = self.get_current_map_data()
-		self.change_map(cur_map.get("map_name"))
+		self.change_map(cur_map.get("name"))
 		#tree.reload_current_scene()
 # 设置地图历史
 func set_maps_hostory(hostory = []):
@@ -235,17 +235,31 @@ func update_maps_hostory_item(map_name: String, patch := {}):
 # 获取当前地图数据
 func get_current_map_data():
 	var hostory = state.get("maps_hostory", [])
+	var maps_info: Dictionary = self.load_map().get("maps_info", {})
 	if hostory.is_empty():
-		return {}
+		return maps_info.get(self.load_map().get("maps_sort", [])[0], {})
 	# 末尾即当前地图
-	return hostory[hostory.size() - 1]
+	return maps_info.get(hostory[hostory.size() - 1].get("map_name", ""), {})
 # 获取前一个地图数据
 func get_prev_map_data():
 	var hostory = state.get("maps_hostory", [])
+	var maps_info: Dictionary = self.load_map().get("maps_info", {})
+	print("hostory", hostory, hostory.size())
 	if hostory.size() < 2:
 		return {}
 	# 倒数第二项即上一个地图
-	return hostory[hostory.size() - 2]
+	return maps_info.get(hostory[hostory.size() - 2].get("map_name", ""), {})
+# 获取下一个地图数据
+func get_next_map_data():
+	var maps: Dictionary = self.load_map()
+	var current_map = self.get_current_map_data()
+	var next_map_index = maps.get("maps_sort", []).find(current_map.get("name", "")) + 1
+	print("current_map", current_map, next_map_index)
+	if next_map_index >= maps.get("maps_sort", []).size():
+		return {}
+	var next_map = maps.get("maps_sort", [])[next_map_index]
+	return maps.get("maps_info", {}).get(next_map, {})
+
 # 切换地图
 func change_map(map_name: String = "maps_1", options: Dictionary = {}) -> void:
 	if options.get("type", "") != "init":
@@ -267,17 +281,18 @@ func change_map(map_name: String = "maps_1", options: Dictionary = {}) -> void:
 	
 	# 1) 读取目标地图配置，并准备默认出生点
 	var maps: Dictionary = load_map()
-	var next_map: Dictionary = maps.get(map_name, {})
+	var next_map: Dictionary = maps.get("maps_info", {}).get(map_name, {})
 	var tscn: String = next_map.get("file", "")
 	var spawn: Dictionary = next_map.get("spawn", {})
-	var spawn_position: Dictionary = spawn.get("default", {
+	var spawn_position: Dictionary = spawn.get("init", {
 		"x": 0,
 		"y": 0,
 		"dir": "right"
 	})
+	var spawn_next_position: Dictionary = spawn.get("next", spawn_position)
 	var player_position: Dictionary = spawn_position
 	var is_back: bool = options.get("type", "") == "back"
-	
+
 	# 2) 先把新地图实例化并挂载，确保后续可以读取相机边界
 	# 加载新地图
 	var new_map = load(tscn).instantiate()
@@ -289,31 +304,35 @@ func change_map(map_name: String = "maps_1", options: Dictionary = {}) -> void:
 		# back: 回到上一个地图时，出生在“上一个地图记录的退出点”
 		var cur_map_data: Dictionary = self.get_current_map_data()
 		var prev_map_data: Dictionary = self.get_prev_map_data()
-		player_position = prev_map_data.get("exit_point", spawn_position)
+		player_position = prev_map_data.get("exit_point", spawn_next_position)
 		
 		# 回退后，当前地图记录应从历史中移除
-		self.delete_maps_hostory_item(cur_map_data.get("map_name", ""))
+		self.delete_maps_hostory_item(cur_map_data.get("name", ""))
 	else:
 		# forward: 记录当前地图的退出点，供之后 back 使用
 		var exit_point = options.get("exit_point", null)
-		if exit_point != null:
+		if exit_point != null and exit_point.size() > 0:
+			print("exit_point", exit_point)
 			var current_map_data: Dictionary = self.get_current_map_data()
-			self.update_maps_hostory_item(current_map_data.get("map_name", ""), {
+			self.update_maps_hostory_item(current_map_data.get("name", ""), {
 				"exit_point": {
-					"x": exit_point.x,
-					"y": exit_point.y,
+					"x": exit_point.get('x', 0),
+					"y": exit_point.get('y', 0),
 					"dir": "right"
 				}
 			})
 
 		# 记录目标地图入口点；不存在则会自动新增历史项
-		self.update_maps_hostory_item(map_name, {
-			"enter_point": {
-				"x": player_position.x,
-				"y": player_position.y,
-				"dir": "right"
-			}
-		})
+		if map_name != "":
+			self.update_maps_hostory_item(map_name, {
+				"enter_point": {
+					"x": player_position.x,
+					"y": player_position.y,
+					"dir": "right"
+				}
+			})
+	
+	print("player_position", self.state.maps_hostory)
 
 	var player = load("res://scenes/Player.tscn").instantiate()
 	

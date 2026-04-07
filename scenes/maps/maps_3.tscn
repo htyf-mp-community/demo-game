@@ -1,6 +1,7 @@
-[gd_scene load_steps=7 format=4 uid="uid://ckcecorrmgcs2"]
+[gd_scene load_steps=8 format=4 uid="uid://ckcecorrmgcs2"]
 
 [ext_resource type="Texture2D" uid="uid://bb4u02liig15i" path="res://assets/sprites/world_tileset.png" id="1_28t1h"]
+[ext_resource type="Script" uid="uid://dm1qaaja83t2g" path="res://scripts/maps_3.gd" id="1_mvm01"]
 [ext_resource type="PackedScene" uid="uid://5orqa6b6pu11" path="res://scenes/Back_door.tscn" id="2_p5wtx"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_p5wtx"]
@@ -346,6 +347,7 @@ physics_layer_0/collision_layer = 1
 sources/0 = SubResource("TileSetAtlasSource_28t1h")
 
 [node name="Maps_3" type="Node2D"]
+script = ExtResource("1_mvm01")
 
 [node name="ParallaxBackground" type="ParallaxBackground" parent="."]
 
