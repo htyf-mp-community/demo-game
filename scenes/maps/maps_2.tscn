@@ -378,6 +378,7 @@ position = Vector2(896, -74)
 libraries = {
 &"": SubResource("AnimationLibrary_msc6v")
 }
+autoplay = "RESET"
 
 [node name="Coins" type="Node" parent="."]
 
