@@ -131,6 +131,7 @@ func exit_game() -> void:
 			s.status = 'title'	
 			return s
 	)
+	self.set_maps_hostory([])
 	change_scene("res://scenes/title_screen.tscn")
 	
 func death():
