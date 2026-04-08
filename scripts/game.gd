@@ -2,7 +2,8 @@ extends Node2D
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	GameManager.change_map("maps_1", {
+	var cur_map = GameManager.get_current_map_data()
+	GameManager.change_map(cur_map.name, {
 		"type": "init",
 	})
 	GameManager.connect("state_changed", func (state):
